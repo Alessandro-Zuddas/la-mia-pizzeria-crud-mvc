@@ -63,6 +63,68 @@ namespace la_mia_pizzeria_model.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Update(int id)
+        {
+            using var ctx = new PizzaContext();
+            
+            var pizza = ctx.Pizzas.FirstOrDefault(p => p.Id == id);
+
+            if(pizza == null)
+            {
+                return NotFound();
+            }
+
+            return View(pizza);
+        }
+
+        [HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult Update(int id, Pizza pizza)
+        {
+            using var ctx = new PizzaContext();
+
+            if (!ModelState.IsValid)
+            {
+                return View(pizza);
+            }
+
+            var pizzaToUpdate = ctx.Pizzas.FirstOrDefault(p => p.Id == id);
+
+            if(pizzaToUpdate is null)
+            {
+                return NotFound();
+            }
+
+            pizzaToUpdate.Name = pizza.Name;
+            pizzaToUpdate.Description = pizza.Description;
+            pizzaToUpdate.Price = pizza.Price;
+            pizzaToUpdate.ImgSrc = pizza.ImgSrc;
+
+            ctx.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult Delete(int id)
+        {
+			using var ctx = new PizzaContext();
+
+            var pizzaToDelete = ctx.Pizzas.FirstOrDefault(p => p.Id == id);
+
+            if(pizzaToDelete is null)
+            {
+                return NotFound();
+            }
+
+            ctx.Pizzas.Remove(pizzaToDelete);
+            ctx.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

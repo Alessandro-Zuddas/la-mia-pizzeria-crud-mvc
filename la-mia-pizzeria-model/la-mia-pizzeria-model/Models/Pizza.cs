@@ -26,7 +26,6 @@ namespace la_mia_pizzeria_model.Models
         public string Description { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Prezzo obbligatorio!")]
-        [Range(0, 100, ErrorMessage = "Il prezzo deve essere compreso tra 0 e 100!")]
         public string Price { get; set; } = string.Empty;
 
     }
