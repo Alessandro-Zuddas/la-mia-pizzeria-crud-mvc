@@ -44,7 +44,11 @@ else
                       <td>@pizza.Description</td>
                       <td>@pizza.Price</td>
                       <td>
-                          <a class="btn btn-secondary" href="@Url.Action("Update", "Pizza", new { Id = pizza.Id })"> Edit </a>
+                          <a class="btn btn-secondary my-2" href="@Url.Action("Update", "Pizza", new { Id = pizza.Id })"> Edit </a>
+                          <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@pizza.Id" method="post">
+                              @Html.AntiForgeryToken()
+                              <button class="btn btn-danger"> Delete </button>
+                          </form>
                       </td>
                     </tr> 
                 }
