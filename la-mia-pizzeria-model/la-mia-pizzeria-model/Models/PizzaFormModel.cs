@@ -2,7 +2,7 @@
 {
 	public class PizzaFormModel
 	{
-		public Pizza Pizza { get; set; }
+		public Pizza Pizza { get; set; } = new Pizza();
 		public IEnumerable<Category> Categories { get; set; } = Enumerable.Empty<Category>();
 	}
 }

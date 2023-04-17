@@ -28,7 +28,8 @@ namespace la_mia_pizzeria_model.Models
         [Required(ErrorMessage = "Prezzo obbligatorio!")]
         public string Price { get; set; } = string.Empty;
 
-        public int CategoryId { get; set; }
+        [Required(ErrorMessage = "Categoria obbligatoria!")]
+        public int? CategoryId { get; set; }
         public Category? Category { get; set; }
     }
 }

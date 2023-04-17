@@ -50,20 +50,23 @@ namespace la_mia_pizzeria_model.Controllers
                 Categories = ctx.Categories.ToArray(),
             }; 
 
-            return View();
+            return View(formModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Pizza pizza)
+        public IActionResult Create(PizzaFormModel form)
         {
-            if(!ModelState.IsValid)
+            using var ctx = new PizzaContext();
+
+            if (!ModelState.IsValid)
             {
-                return View(pizza);
+                form.Categories = ctx.Categories.ToArray();
+
+                return View(form);
             }
 
-            using var ctx = new PizzaContext();
-            ctx.Pizzas.Add(pizza);
+            ctx.Pizzas.Add(form.Pizza);
 
             ctx.SaveChanges();
 
@@ -81,18 +84,25 @@ namespace la_mia_pizzeria_model.Controllers
                 return NotFound();
             }
 
-            return View(pizza);
+            var formModel = new PizzaFormModel
+            {
+                Pizza = pizza,
+
+                Categories = ctx.Categories.ToArray(),
+            };
+
+            return View(formModel);
         }
 
         [HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Update(int id, Pizza pizza)
+		public IActionResult Update(int id, PizzaFormModel form)
         {
             using var ctx = new PizzaContext();
 
             if (!ModelState.IsValid)
             {
-                return View(pizza);
+                return View(form);
             }
 
             var pizzaToUpdate = ctx.Pizzas.FirstOrDefault(p => p.Id == id);
@@ -102,10 +112,11 @@ namespace la_mia_pizzeria_model.Controllers
                 return NotFound();
             }
 
-            pizzaToUpdate.Name = pizza.Name;
-            pizzaToUpdate.Description = pizza.Description;
-            pizzaToUpdate.Price = pizza.Price;
-            pizzaToUpdate.ImgSrc = pizza.ImgSrc;
+            pizzaToUpdate.Name = form.Pizza.Name;
+            pizzaToUpdate.Description = form.Pizza.Description;
+            pizzaToUpdate.Price = form.Pizza.Price;
+            pizzaToUpdate.ImgSrc = form.Pizza.ImgSrc;
+            pizzaToUpdate.Category = form.Pizza.Category;
 
             ctx.SaveChanges();
 

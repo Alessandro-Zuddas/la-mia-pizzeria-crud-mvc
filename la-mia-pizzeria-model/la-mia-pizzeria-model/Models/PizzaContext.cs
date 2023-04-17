@@ -40,7 +40,7 @@ namespace la_mia_pizzeria_model.Models
 				},
 			};
 
-			if (!Pizzas.Any())
+            if (!Pizzas.Any())
             {
                 Pizzas.AddRange(pizzaSeed);
             };
