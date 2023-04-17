@@ -43,6 +43,13 @@ namespace la_mia_pizzeria_model.Controllers
 
         public IActionResult Create()
         {
+			using var ctx = new PizzaContext();
+
+			var formModel = new PizzaFormModel
+            {
+                Categories = ctx.Categories.ToArray(),
+            }; 
+
             return View();
         }
 
