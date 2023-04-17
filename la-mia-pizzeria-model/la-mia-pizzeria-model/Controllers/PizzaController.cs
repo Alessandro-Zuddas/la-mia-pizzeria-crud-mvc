@@ -1,5 +1,6 @@
 ﻿using la_mia_pizzeria_model.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace la_mia_pizzeria_model.Controllers
@@ -31,7 +32,9 @@ namespace la_mia_pizzeria_model.Controllers
         {
             using var ctx = new PizzaContext();
 
-            var pizza = ctx.Pizzas.SingleOrDefault(p => p.Id == id);
+            var pizza = ctx.Pizzas
+                .Include(p => p.Category)
+                .SingleOrDefault(p => p.Id == id);
 
             if(pizza == null)
             {
