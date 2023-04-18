@@ -53,6 +53,13 @@
         </select>
         <span asp-validation-for="Pizza.CategoryId" class="text-danger"></span>
       </div>
+      <div class="mb-3">
+        <label asp-for="SelectedIngredients" class="form-label">Ingredients:</label>
+
+        <select asp-for="SelectedIngredients" multiple="multiple" asp-items="@Model.Ingredients">
+           
+        </select>
+      </div>
 
       <button type="submit" class="btn btn-primary">Submit</button>
 

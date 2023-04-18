@@ -1,7 +1,9 @@
 ﻿using la_mia_pizzeria_model.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Linq;
 
 namespace la_mia_pizzeria_model.Controllers
 {
@@ -34,6 +36,7 @@ namespace la_mia_pizzeria_model.Controllers
 
             var pizza = ctx.Pizzas
                 .Include(p => p.Category)
+                .Include(p => p.Ingredients)
                 .SingleOrDefault(p => p.Id == id);
 
             if(pizza == null)
@@ -51,6 +54,7 @@ namespace la_mia_pizzeria_model.Controllers
 			var formModel = new PizzaFormModel
             {
                 Categories = ctx.Categories.ToArray(),
+                Ingredients = ctx.Ingredients.Select(i => new SelectListItem(i.Name, i.Id.ToString())).ToArray(),
             }; 
 
             return View(formModel);
@@ -65,9 +69,12 @@ namespace la_mia_pizzeria_model.Controllers
             if (!ModelState.IsValid)
             {
                 form.Categories = ctx.Categories.ToArray();
+                form.Ingredients = ctx.Ingredients.Select(i => new SelectListItem(i.Name, i.Id.ToString())).ToArray();
 
                 return View(form);
             }
+
+            form.Pizza.Ingredients = form.SelectedIngredients.Select(si => ctx.Ingredients.First(i => i.Id == Convert.ToInt32(si))).ToList();
 
             ctx.Pizzas.Add(form.Pizza);
 
@@ -80,7 +87,7 @@ namespace la_mia_pizzeria_model.Controllers
         {
             using var ctx = new PizzaContext();
             
-            var pizza = ctx.Pizzas.FirstOrDefault(p => p.Id == id);
+            var pizza = ctx.Pizzas.Include(p => p.Ingredients).FirstOrDefault(p => p.Id == id);
 
             if(pizza == null)
             {
@@ -92,7 +99,13 @@ namespace la_mia_pizzeria_model.Controllers
                 Pizza = pizza,
 
                 Categories = ctx.Categories.ToArray(),
+
+                Ingredients = ctx.Ingredients.ToArray().Select(i => new SelectListItem(i.Name, i.Id.ToString(), pizza.Ingredients!
+                .Any(_i => _i.Id == i.Id)))
+                .ToArray(),
             };
+
+            formModel.SelectedIngredients = formModel.Ingredients.Where(i => i.Selected).Select(i => i.Value).ToList();
 
             return View(formModel);
         }
@@ -105,22 +118,28 @@ namespace la_mia_pizzeria_model.Controllers
 
             if (!ModelState.IsValid)
             {
+                form.Categories = ctx.Categories.ToArray();
+                form.Ingredients = ctx.Ingredients.Select(i => new SelectListItem(i.Name, i.Id.ToString())).ToArray();
+
                 return View(form);
             }
 
-            var pizzaToUpdate = ctx.Pizzas.FirstOrDefault(p => p.Id == id);
+            //var pizzaToUpdate = ctx.Pizzas.FirstOrDefault(p => p.Id == id);
 
-            if(pizzaToUpdate is null)
-            {
-                return NotFound();
-            }
+            //if(pizzaToUpdate is null)
+            //{
+            //    return NotFound();
+            //}
 
-            pizzaToUpdate.Name = form.Pizza.Name;
-            pizzaToUpdate.Description = form.Pizza.Description;
-            pizzaToUpdate.Price = form.Pizza.Price;
-            pizzaToUpdate.ImgSrc = form.Pizza.ImgSrc;
-            pizzaToUpdate.Category = form.Pizza.Category;
+            //pizzaToUpdate.Name = form.Pizza.Name;
+            //pizzaToUpdate.Description = form.Pizza.Description;
+            //pizzaToUpdate.Price = form.Pizza.Price;
+            //pizzaToUpdate.ImgSrc = form.Pizza.ImgSrc;
+            //pizzaToUpdate.Category = form.Pizza.Category;
 
+            form.Pizza.Ingredients = form.SelectedIngredients.Select(si => ctx.Ingredients.First(i => i.Id == Convert.ToInt32(si))).ToList();
+
+            ctx.Pizzas.Update(form.Pizza);
             ctx.SaveChanges();
 
             return RedirectToAction("Index");
