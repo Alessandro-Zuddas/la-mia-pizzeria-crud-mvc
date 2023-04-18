@@ -1,6 +1,17 @@
 using la_mia_pizzeria_model.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using la_mia_pizzeria_model.Areas.Identity.Data;
+using PizzaContextIdentity = la_mia_pizzeria_model.Areas.Identity.Data.PizzaContext;
+using PizzaContext = la_mia_pizzeria_model.Models.PizzaContext;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args); 
+
+builder.Services.AddDbContext<PizzaContextIdentity>(options =>
+    options.UseSqlServer("Data Source=localhost;Initial Catalog=PizzaDb;Integrated Security=True;Pooling=False;TrustServerCertificate = True"));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<PizzaContextIdentity>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -20,15 +31,18 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Pizza}/{action=Index}/{id?}");
 
+app.MapRazorPages();
+
 using (var ctx = new PizzaContext())
 {
-    ctx.Seed();
+    ctx!.Seed();
 }
 
 app.Run();

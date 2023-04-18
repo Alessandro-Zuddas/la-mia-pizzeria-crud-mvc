@@ -1,4 +1,5 @@
 ﻿using la_mia_pizzeria_model.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using System.Linq;
 
 namespace la_mia_pizzeria_model.Controllers
 {
+    [Authorize]
     public class PizzaController : Controller
     {
         private readonly ILogger<PizzaController> _logger;
