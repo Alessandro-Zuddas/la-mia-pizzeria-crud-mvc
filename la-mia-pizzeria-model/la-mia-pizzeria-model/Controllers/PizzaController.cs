@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace la_mia_pizzeria_model.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin,User")]
     public class PizzaController : Controller
     {
         private readonly ILogger<PizzaController> _logger;
@@ -49,6 +49,7 @@ namespace la_mia_pizzeria_model.Controllers
             return View(pizza);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
 			using var ctx = new PizzaContext();
@@ -62,6 +63,7 @@ namespace la_mia_pizzeria_model.Controllers
             return View(formModel);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(PizzaFormModel form)
@@ -85,6 +87,7 @@ namespace la_mia_pizzeria_model.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id)
         {
             using var ctx = new PizzaContext();
@@ -112,6 +115,7 @@ namespace la_mia_pizzeria_model.Controllers
             return View(formModel);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
 		[ValidateAntiForgeryToken]
 		public IActionResult Update(int id, PizzaFormModel form)
@@ -147,8 +151,8 @@ namespace la_mia_pizzeria_model.Controllers
             return RedirectToAction("Index");
         }
 
-
-		[HttpPost]
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
 		[ValidateAntiForgeryToken]
 		public IActionResult Delete(int id)
         {

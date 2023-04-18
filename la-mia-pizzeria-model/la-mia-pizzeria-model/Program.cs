@@ -11,6 +11,7 @@ builder.Services.AddDbContext<PizzaContextIdentity>(options =>
     options.UseSqlServer("Data Source=localhost;Initial Catalog=PizzaDb;Integrated Security=True;Pooling=False;TrustServerCertificate = True"));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<PizzaContextIdentity>();
 
 // Add services to the container.
